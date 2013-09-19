@@ -10,6 +10,7 @@ namespace FromCCFCNT2FEDVerticale
         private string CodiceTargatura;
         public string PrimoPezzo { get; set; }
         public int Counter { get; set; }
+        public string OriginalKey { get; set; }
 
         public TracciatoCCF2FED(string line, int counter)
         {
@@ -18,6 +19,7 @@ namespace FromCCFCNT2FEDVerticale
             Anno = line.Substring(12, 4);
             Mese = line.Substring(10, 2);
             CodiceTargatura = line.Substring(0, 10).Trim();
+            OriginalKey = line.Substring(488, 10);
         }
 
         public string Chiave

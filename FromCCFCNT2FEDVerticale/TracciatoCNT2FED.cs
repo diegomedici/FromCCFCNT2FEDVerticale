@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace FromCCFCNT2FEDVerticale
@@ -15,6 +16,7 @@ namespace FromCCFCNT2FEDVerticale
         public string DataPrescrizione { get; set; }
         public string UnitaPosologiche { get; set; }
         public int Counter { get; set; }
+        public string OriginalKey { get; set; }
 
         public int Quantita { get; set; }
 
@@ -27,7 +29,7 @@ namespace FromCCFCNT2FEDVerticale
 
         public TracciatoCNT2FED(string line, int counter)
         {
-            Counter = counter;
+            //Counter = counter;
             PrimoPezzo = line.Substring(0, 243);
             CodiceAslFarmacia = line.Substring(263, 10);
             PrezzoAcquisto = line.Substring(294, 10);
@@ -39,10 +41,14 @@ namespace FromCCFCNT2FEDVerticale
             Anno = line.Substring(12, 4);
             Mese = line.Substring(10, 2);
             CodiceTargatura = line.Substring(0, 10).Trim();
+            OriginalKey = line.Substring(488, 10);
+
         }
 
-        public string ToFED()
+        public string ToFED(Dictionary<string, string> mapsFromOriginalAndNewKey)
         {
+            if (!mapsFromOriginalAndNewKey.ContainsKey(OriginalKey)) throw new Exception("Chiave non trovata");
+
             StringBuilder str = new StringBuilder(506);
             str.Append(PrimoPezzo);
             str.Append(ImportoCompenso.ToString("0000000000"));
@@ -54,7 +60,7 @@ namespace FromCCFCNT2FEDVerticale
             str.Append(DataPrescrizione);
             str.Append("0000450000"); //Compenso per pezzo
             str.Append(new string(' ', 179));
-            str.Append(Chiave);
+            str.Append(mapsFromOriginalAndNewKey[OriginalKey]);
             str.Append("*");
             return str.ToString();
         }
